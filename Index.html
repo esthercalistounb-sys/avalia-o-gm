@@ -1,224 +1,79 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Avalie seu atendimento</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<style>
-  :root{
-    --ink: #7A2417;
-    --ink-soft: #A05A3D;
-    --cream: #FFF8E7;
-    --cream-2: #FBE9B8;
-    --coral: #E8A317;
-    --coral-soft: #FBE7A1;
-    --line: rgba(122,36,23,0.14);
-    --line-strong: rgba(122,36,23,0.28);
-    --radius: 18px;
-  }
-  *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
-  body{
-    background: #B5301E;
-    color: var(--ink);
-    font-family: 'Inter', sans-serif;
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    padding: 28px 16px 60px;
-  }
-  .page{
-    width:100%;
-    max-width:420px;
-  }
-  .eyebrow{
-    text-align:center;
-    color: rgba(251,246,236,0.55);
-    font-size:11px;
-    letter-spacing:0.16em;
-    text-transform:uppercase;
-    margin: 0 0 18px;
-  }
-  .card{
-    background: var(--cream);
-    border-radius: var(--radius);
-    padding: 28px 22px 24px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.28);
-  }
-  .greet{
-    display:flex;
-    align-items:center;
-    gap:14px;
-    margin-bottom: 22px;
-  }
-  .avatar{
-    width:52px;height:52px;border-radius:50%;
-    background: var(--ink);
-    color: var(--cream);
-    display:flex;align-items:center;justify-content:center;
-    font-family:'Fraunces', serif;
-    font-size:19px;
-    font-weight:500;
-    flex-shrink:0;
-  }
-  .greet p{margin:0;}
-  .greet .label{
-    font-size:13px;
-    color: var(--ink-soft);
-    margin-bottom:2px;
-  }
-  .greet .name{
-    font-family:'Fraunces', serif;
-    font-size:22px;
-    font-weight:500;
-    line-height:1.15;
-  }
-  h1{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:24px;
-    line-height:1.3;
-    margin: 0 0 22px;
-  }
-  .faces{
-    display:flex;
-    justify-content:space-between;
-    gap:6px;
-    margin-bottom:10px;
-  }
-  .face-btn{
-    background:none;
-    border:none;
-    cursor:pointer;
-    padding:6px 2px;
-    border-radius:14px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-    flex:1;
-    transition: background 0.15s ease;
-  }
-  .face-btn svg{
-    width:38px;height:38px;
-    transition: transform 0.18s ease;
-  }
-  .face-btn[data-state="off"] svg .face-fill{ fill: var(--cream-2); }
-  .face-btn[data-state="off"] svg .face-line{ stroke: var(--line-strong); }
-  .face-btn[data-state="on"]{ background: var(--coral-soft); }
-  .face-btn[data-state="on"] svg{ transform: scale(1.08); }
-  .face-btn[data-state="on"] svg .face-fill{ fill: var(--coral); }
-  .face-btn[data-state="on"] svg .face-line{ stroke: var(--cream); }
-  .face-caption{
-    text-align:center;
-    min-height:20px;
-    font-size:13px;
-    font-weight:500;
-    color: var(--coral);
-    margin: 0 0 26px;
-  }
-  .divider{
-    height:1px;
-    background: var(--line);
-    margin: 22px 0;
-    border:none;
-  }
-  .criteria-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding: 10px 0;
-    gap:8px;
-    flex-wrap: wrap;
-  }
-  .criteria-row + .criteria-row{ border-top: 1px solid var(--line); }
-  .criteria-label{
-    font-size:13.5px;
-    color: var(--ink);
-    flex: 1 1 160px;
-    min-width: 0;
-  }
-  .stars{
-    display:flex;
-    gap:1px;
-    flex-shrink:0;
-  }
-  .star-btn{
-    background:none;border:none;cursor:pointer;padding:2px;
-  }
-  .star-btn svg{ width:17px; height:17px; }
-  .star-btn[data-state="off"] svg path{ fill: var(--cream-2); stroke: var(--line-strong); stroke-width:1.2; }
-  .star-btn[data-state="on"] svg path{ fill: var(--coral); stroke: var(--coral); stroke-width:1.2; }
-  textarea{
-    width:100%;
-    min-height:78px;
-    resize:vertical;
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:12px 13px;
-    font-family:'Inter', sans-serif;
-    font-size:14px;
-    color: var(--ink);
-    background: #fff;
-    margin-top: 18px;
-  }
-  textarea::placeholder{ color: rgba(63,90,76,0.5); }
-  textarea:focus{
-    outline:none;
-    border-color: var(--coral);
-  }
-  .submit-btn{
-    width:100%;
-    margin-top:22px;
-    background: var(--ink);
-    color: var(--cream);
-    border:none;
-    border-radius:12px;
-    padding:15px;
-    font-family:'Inter', sans-serif;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition: opacity 0.15s ease, transform 0.1s ease;
-  }
-  .submit-btn:active{ transform: scale(0.98); }
-  .submit-btn:disabled{ opacity:0.4; cursor:not-allowed; }
-  .footnote{
-    text-align:center;
-    color: rgba(251,246,236,0.45);
-    font-size:11.5px;
-    margin-top:18px;
-    line-height:1.5;
-  }
-
-  .done{ display:none; text-align:center; padding: 18px 4px 6px; }
-  .stamp{
-    width:84px;height:84px;
-    border-radius:50%;
-    border:2px solid var(--ink);
-    display:flex;align-items:center;justify-content:center;
-    margin: 0 auto 18px;
-    transform: rotate(-6deg);
-  }
-  .stamp svg{ width:38px;height:38px; }
-  .done h2{
-    font-family:'Fraunces', serif;
-    font-weight:500;
-    font-size:21px;
-    margin: 0 0 8px;
-  }
-  .done p{
-    font-size:14px;
-    color: var(--ink-soft);
-    line-height:1.6;
-    margin:0;
-  }
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Avaliação de Atendimento</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #7A2417;
+      --ink-soft: #A05A3D;
+      --cream: #FFF8E7;
+      --cream-2: #FBE9B8;
+      --coral: #E8A317;
+      --coral-soft: #FBE7A1;
+      --line: rgba(122,36,23,0.14);
+      --line-strong: rgba(122,36,23,0.28);
+      --radius: 18px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      background: #B5301E;
+      color: var(--ink);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 28px 16px 60px;
+      margin: 0;
+    }
+    .page { width: 100%; max-width: 420px; }
+    .eyebrow { text-align: center; color: rgba(251,246,236,0.55); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; margin: 0 0 18px; }
+    .card { background: var(--cream); border-radius: var(--radius); padding: 28px 22px 24px; box-shadow: 0 18px 40px rgba(0,0,0,0.28); }
+    .greet { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+    .avatar { width: 52px; height: 52px; border-radius: 50%; background: var(--ink); color: var(--cream); display: flex; align-items: center; justify-content: center; font-family: 'Fraunces', serif; font-size: 19px; font-weight: 500; flex-shrink: 0; }
+    .greet p { margin: 0; }
+    .greet .label { font-size: 13px; color: var(--ink-soft); margin-bottom: 2px; }
+    .greet .name { font-family: 'Fraunces', serif; font-size: 22px; font-weight: 500; line-height: 1.15; }
+    h1 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 24px; line-height: 1.3; margin: 0 0 22px; }
+    .faces { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 10px; }
+    .face-btn { background: none; border: none; cursor: pointer; padding: 6px 2px; border-radius: 14px; display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1; transition: background 0.15s ease; }
+    .face-btn svg { width: 38px; height: 38px; transition: transform 0.18s ease; }
+    .face-btn[data-state="off"] svg .face-fill { fill: var(--cream-2); }
+    .face-btn[data-state="off"] svg .face-line { stroke: var(--line-strong); }
+    .face-btn[data-state="on"] { background: var(--coral-soft); }
+    .face-btn[data-state="on"] svg { transform: scale(1.08); }
+    .face-btn[data-state="on"] svg .face-fill { fill: var(--coral); }
+    .face-btn[data-state="on"] svg .face-line { stroke: var(--cream); }
+    .face-caption { text-align: center; min-height: 20px; font-size: 13px; font-weight: 500; color: var(--coral); margin: 0 0 26px; }
+    .divider { height: 1px; background: var(--line); margin: 22px 0; border: none; }
+    .criteria-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; gap: 8px; flex-wrap: wrap; }
+    .criteria-row + .criteria-row { border-top: 1px solid var(--line); }
+    .criteria-label { font-size: 13.5px; color: var(--ink); flex: 1 1 160px; min-width: 0; }
+    .stars { display: flex; gap: 1px; flex-shrink: 0; }
+    .star-btn { background: none; border: none; cursor: pointer; padding: 2px; }
+    .star-btn svg { width: 17px; height: 17px; }
+    .star-btn[data-state="off"] svg path { fill: var(--cream-2); stroke: var(--line-strong); stroke-width: 1.2; }
+    .star-btn[data-state="on"] svg path { fill: var(--coral); stroke: var(--coral); stroke-width: 1.2; }
+    textarea { width: 100%; min-height: 78px; resize: vertical; border: 1px solid var(--line); border-radius: 12px; padding: 12px 13px; font-family: 'Inter', sans-serif; font-size: 14px; color: var(--ink); background: #fff; margin-top: 18px; }
+    textarea::placeholder { color: rgba(63,90,76,0.5); }
+    textarea:focus { outline: none; border-color: var(--coral); }
+    .submit-btn { width: 100%; margin-top: 22px; background: var(--ink); color: var(--cream); border: none; border-radius: 12px; padding: 15px; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; cursor: pointer; transition: opacity 0.15s ease, transform 0.1s ease; }
+    .submit-btn:active { transform: scale(0.98); }
+    .submit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .footnote { text-align: center; color: rgba(251,246,236,0.45); font-size: 11.5px; margin-top: 18px; line-height: 1.5; }
+    .done { display: none; text-align: center; padding: 18px 4px 6px; }
+    .stamp { width: 84px; height: 84px; border-radius: 50%; border: 2px solid var(--ink); display: flex; align-items: center; justify-content: center; margin: 0 auto 18px; transform: rotate(-6deg); }
+    .stamp svg { width: 38px; height: 38px; }
+    .done h2 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 21px; margin: 0 0 8px; }
+    .done p { font-size: 14px; color: var(--ink-soft); line-height: 1.6; margin: 0; }
+  </style>
 </head>
 <body>
+
 <form name="avaliacao-atendimento" data-netlify="true" netlify-honeypot="bot-field" hidden>
   <input type="text" name="loja" />
   <input type="text" name="vendedora" />
@@ -229,16 +84,17 @@
   <textarea name="comentario"></textarea>
   <input type="text" name="bot-field" />
 </form>
+
 <div class="page">
   <p class="eyebrow" id="lojaNome">Gostinho Mineiro</p>
 
   <div class="card">
     <div id="formView">
       <div class="greet">
-        <div class="avatar" id="avatarInitials">VC</div>
+        <div class="avatar" id="avatarInitials">GM</div>
         <p>
           <span class="label">Você foi atendido(a) por</span><br>
-          <span class="name" id="vendedoraNome">Vanessa Costa</span>
+          <span class="name" id="vendedoraNome">Atendente</span>
         </p>
       </div>
 
@@ -263,15 +119,25 @@
         <svg viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke="#7A2417" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <h2>Avaliação enviada</h2>
-      <p>Obrigado por avaliar o atendimento de <strong id="vendedoraNomeDone">Vanessa</strong>. Seu retorno chega direto para a equipe da loja.</p>
+      <p>Obrigado por avaliar o atendimento de <strong id="vendedoraNomeDone">nossa equipe</strong>. Seu retorno chega direto para a equipe da loja.</p>
     </div>
   </div>
 </div>
 
 <script>
-  var params = new URLSearchParams(window.location.search);
-  var vendedora = params.get('vendedora') || 'Vanessa Costa';
-  var loja = params.get('loja') || 'Gostinho Mineiro';
+  // CAPTURA INTELIGENTE DE PARÂMETROS
+  var urlAtual = window.location.href;
+  var vendedora = "Atendente";
+  var loja = "Gostinho Mineiro";
+
+  if (urlAtual.indexOf("vendedora=") !== -1) {
+    var partes = urlAtual.split("vendedora=");
+    vendedora = decodeURIComponent(partes[1].split("&")[0]);
+  }
+  if (urlAtual.indexOf("loja=") !== -1) {
+    var partesLoja = urlAtual.split("loja=");
+    loja = decodeURIComponent(partesLoja[1].split("&")[0]);
+  }
 
   document.getElementById('vendedoraNome').textContent = vendedora;
   document.getElementById('vendedoraNomeDone').textContent = vendedora.split(' ')[0];
