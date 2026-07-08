@@ -17,9 +17,20 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: var(--bg); color: var(--text); padding: 20px; display: flex; justify-content: center; align-items: center; min-height: 100vh; }
-        .container { background: var(--card); max-width: 500px; width: 100%; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.05); border: 1px solid rgba(211, 84, 0, 0.1); }
         
-        .header { text-align: center; margin-bottom: 30px; }
+        .container { 
+            background: var(--card); 
+            max-width: 500px; 
+            width: 100%; 
+            padding: 30px; 
+            border-radius: 16px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            border: 1px solid rgba(211, 84, 0, 0.1); 
+            position: relative; 
+            overflow: hidden;
+        }
+        
+        .header { text-align: center; margin-bottom: 30px; transition: opacity 0.3s; }
         .header h1 { font-size: 24px; color: var(--primary); margin-bottom: 5px; }
         .header p { font-size: 14px; color: var(--text-light); }
         .info-balao { background: #fff3cd; color: #856404; padding: 10px; border-radius: 8px; text-align: center; font-size: 14px; margin-bottom: 25px; font-weight: 600; display: none; }
@@ -27,7 +38,7 @@
         .section-title { font-size: 15px; font-weight: 600; margin-bottom: 10px; margin-top: 20px; display: block; color: var(--text); }
         
         input[type="text"], textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 15px; transition: all 0.3s; margin-bottom: 10px; outline: none; }
-        input[type="text"]:focus, textarea :focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
+        input[type="text"]:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(211, 84, 0, 0.1); }
         
         /* Estrelas da Nota Geral */
         .stars-container { display: flex; justify-content: space-between; direction: rtl; margin-bottom: 20px; }
@@ -35,90 +46,121 @@
         .stars-container label { font-size: 36px; color: #ddd; cursor: pointer; transition: color 0.2s; }
         .stars-container label:hover, .stars-container label:hover ~ label, .stars-container input:checked ~ label { color: #f1c40f; }
 
-        /* Opções Rápidas (Sim/Não ou Notas) */
+        /* Opções Rápidas (Excelente/Bom/Regular) */
         .options-group { display: flex; gap: 10px; margin-bottom: 15px; }
-        .options-group label { flex: 1; text-align: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; background: #fff; }
+        .options-group label { flex: 1; text-align: center; padding: 10px; border: 1px solid var(--border); border-radius: 8px; cursor: pointer; font-size: 14px; transition: all 0.2s; background: #fff; color: var(--text); }
         .options-group input { display: none; }
         .options-group input:checked + label { background: var(--primary); color: white; border-color: var(--primary); font-weight: bold; }
 
         textarea { resize: none; height: 80px; }
         
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 20px; }
-        button:hover { background: var(--primary-hover); }
+        #submit-btn { width: 100%; background: var(--primary); color: white; border: none; padding: 14px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; transition: background 0.2s; margin-top: 20px; position: relative; }
+        #submit-btn:hover { background: var(--primary-hover); }
+        #submit-btn:disabled { background: var(--text-light); cursor: not-allowed; }
+        
+        /* Estado de Loading no Botão */
+        .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; position: absolute; left: 50%; top: 50%; margin-left: -10px; margin-top: -10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        #submit-btn.loading .btn-text { opacity: 0; }
+        #submit-btn.loading .spinner { display: block; }
+
+        /* Tela de Sucesso */
+        #success-screen { display: none; text-align: center; padding: 40px 0; }
+        #success-screen .icon { font-size: 60px; color: #2ecc71; margin-bottom: 20px; }
+        #success-screen h2 { color: var(--text); margin-bottom: 10px; }
+        #success-screen p { color: var(--text-light); font-size: 16px; }
+
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header">
-        <h1>Gostinho Mineiro</h1>
-        <p>Sua opinião ajuda a melhorar nosso atendimento!</p>
+    
+    <!-- Formulário Principal -->
+    <div id="form-wrapper">
+        <div class="header">
+            <h1>Gostinho Mineiro</h1>
+            <p>Sua opinião ajuda a melhorar nosso atendimento!</p>
+        </div>
+
+        <!-- Identificação automática da Vendedora exibida ao cliente -->
+        <div id="balao-vendedora" class="info-balao"></div>
+
+        <!-- O formulário NÃO TEM MAIS action/method porque o JavaScript envia os dados -->
+        <form id="evaluation-form">
+            
+            <!-- Campos Ocultos preenchidos via Link -->
+            <input type="hidden" name="loja" id="loja">
+            <input type="hidden" name="vendedora" id="vendedora">
+
+            <!-- Campo de Identificação Simplificado -->
+            <label class="section-title">Seu CPF ou CNPJ</label>
+            <input type="text" name="documento" placeholder="000.000.000-00 ou 00.000.000/0001-00" required>
+
+            <!-- Avaliação Geral (Estrelas) -->
+            <label class="section-title">Nota Geral do Atendimento</label>
+            <div class="stars-container">
+                <input type="radio" id="star5" name="notaGeral" value="5" required><label for="star5">★</label>
+                <input type="radio" id="star4" name="notaGeral" value="4"><label for="star4">★</label>
+                <input type="radio" id="star3" name="notaGeral" value="3"><label for="star3">★</label>
+                <input type="radio" id="star2" name="notaGeral" value="2"><label for="star2">★</label>
+                <input type="radio" id="star1" name="notaGeral" value="1"><label for="star1">★</label>
+            </div>
+
+            <!-- Critérios Específicos -->
+            <label class="section-title">O vendedor demonstrou conhecimento dos produtos?</label>
+            <div class="options-group">
+                <input type="radio" id="conhec_excelente" name="conhecimento" value="Excelente" required>
+                <label for="conhec_excelente">Excelente</label>
+                <input type="radio" id="conhec_bom" name="conhecimento" value="Bom">
+                <label for="conhec_bom">Bom</label>
+                <input type="radio" id="conhec_regular" name="conhecimento" value="Regular">
+                <label for="conhec_regular">Regular</label>
+            </div>
+
+            <label class="section-title">Como foi a atenção dada a você?</label>
+            <div class="options-group">
+                <input type="radio" id="atenc_excelente" name="atencao" value="Excelente" required>
+                <label for="atenc_excelente">Excelente</label>
+                <input type="radio" id="atenc_bom" name="atencao" value="Bom">
+                <label for="atenc_bom">Bom</label>
+                <input type="radio" id="atenc_regular" name="atencao" value="Regular">
+                <label for="atenc_regular">Regular</label>
+            </div>
+
+            <label class="section-title">A agilidade no atendimento foi satisfatória?</label>
+            <div class="options-group">
+                <input type="radio" id="agil_excelente" name="agilidade" value="Excelente" required>
+                <label for="agil_excelente">Excelente</label>
+                <input type="radio" id="agil_bom" name="agilidade" value="Bom">
+                <label for="agil_bom">Bom</label>
+                <input type="radio" id="agil_regular" name="agilidade" value="Regular">
+                <label for="agil_regular">Regular</label>
+            </div>
+
+            <!-- Comentário Adicional -->
+            <label class="section-title">Deixe um comentário ou sugestão (Opcional)</label>
+            <textarea name="comentario" placeholder="Escreva aqui..."></textarea>
+
+            <button type="submit" id="submit-btn">
+                <span class="btn-text">Enviar Avaliação</span>
+                <div class="spinner"></div>
+            </button>
+        </form>
     </div>
 
-    <!-- Identificação automática da Vendedora exibida ao cliente -->
-    <div id="balao-vendedora" class="info-balao"></div>
+    <!-- Tela de Sucesso (Oculta por padrão) -->
+    <div id="success-screen">
+        <div class="icon">✓</div>
+        <h2>Avaliação Enviada!</h2>
+        <p>Agradecemos muito a sua participação.</p>
+        <p>Sua opinião é fundamental para nós.</p>
+    </div>
 
-    <form action="https://script.google.com/macros/s/AKfycbwvYLcBCvuJiqQHiiD9vCY4RP-QOHpK_D7pyKa6faNUzfG6Kgfa4Mvb6LNtG0n_xQJXAg/exec" method="POST">
-        
-        <!-- Campos Ocultos preenchidos via Link -->
-        <input type="hidden" name="loja" id="loja">
-        <input type="hidden" name="vendedora" id="vendedora">
-
-        <!-- Campo de Identificação Simplificado -->
-        <label class="section-title">Seu CPF ou CNPJ</label>
-        <input type="text" name="documento" placeholder="000.000.000-00 ou 00.000.000/0001-00" required>
-
-        <!-- Avaliação Geral (Estrelas) -->
-        <label class="section-title">Nota Geral do Atendimento</label>
-        <div class="stars-container">
-            <input type="radio" id="star5" name="notaGeral" value="5" required><label for="star5">★</label>
-            <input type="radio" id="star4" name="notaGeral" value="4"><label for="star4">★</label>
-            <input type="radio" id="star3" name="notaGeral" value="3"><label for="star3">★</label>
-            <input type="radio" id="star2" name="notaGeral" value="2"><label for="star2">★</label>
-            <input type="radio" id="star1" name="notaGeral" value="1"><label for="star1">★</label>
-        </div>
-
-        <!-- Critérios Específicos -->
-        <label class="section-title">O vendedor demonstrou conhecimento dos produtos?</label>
-        <div class="options-group">
-            <input type="radio" id="conhec_excelente" name="conhecimento" value="Excelente" required>
-            <label for="conhec_excelente">Excelente</label>
-            <input type="radio" id="conhec_bom" name="conhecimento" value="Bom">
-            <label for="conhec_bom">Bom</label>
-            <input type="radio" id="conhec_regular" name="conhecimento" value="Regular">
-            <label for="conhec_regular">Regular</label>
-        </div>
-
-        <label class="section-title">Como foi a atenção dada a você?</label>
-        <div class="options-group">
-            <input type="radio" id="atenc_excelente" name="atencao" value="Excelente" required>
-            <label for="atenc_excelente">Excelente</label>
-            <input type="radio" id="atenc_bom" name="atencao" value="Bom">
-            <label for="atenc_bom">Bom</label>
-            <input type="radio" id="atenc_regular" name="atencao" value="Regular">
-            <label for="atenc_regular">Regular</label>
-        </div>
-
-        <label class="section-title">A agilidade no atendimento foi satisfatória?</label>
-        <div class="options-group">
-            <input type="radio" id="agil_excelente" name="agilidade" value="Excelente" required>
-            <label for="agil_excelente">Excelente</label>
-            <input type="radio" id="agil_bom" name="agilidade" value="Bom">
-            <label for="agil_bom">Bom</label>
-            <input type="radio" id="agil_regular" name="agilidade" value="Regular">
-            <label for="agil_regular">Regular</label>
-        </div>
-
-        <!-- Comentário Adicional -->
-        <label class="section-title">Deixe um comentário ou sugestão (Opcional)</label>
-        <textarea name="comentario" placeholder="Escreva aqui..."></textarea>
-
-        <button type="submit">Enviar Avaliação</button>
-    </form>
 </div>
 
 <script>
-    // Script inteligente para ler os dados da URL (?loja=Atacado&vendedora=Daiana)
+    // 1. Script para ler os dados da URL (?loja=Atacado&vendedora=Daiana)
     const urlParams = new URLSearchParams(window.location.search);
     const lojaParam = urlParams.get('loja');
     const vendedoraParam = urlParams.get('vendedora');
@@ -130,6 +172,52 @@
         balao.innerText = `Você está avaliando o atendimento de: ${vendedoraParam} (${lojaParam || 'Loja Gostinho Mineiro'})`;
         balao.style.display = 'block';
     }
+
+    // 2. Script mágico para enviar para a planilha sem sair da página
+    const form = document.getElementById('evaluation-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const formWrapper = document.getElementById('form-wrapper');
+    const successScreen = document.getElementById('success-screen');
+
+    form.addEventListener('submit', function(e) {
+        e.preventDefault(); // Impede o envio padrão e o recarregamento da página
+
+        // Ativa estado de loading no botão
+        submitBtn.classList.add('loading');
+        submitBtn.disabled = true;
+
+        // Captura os dados do formulário
+        const formData = new FormData(form);
+        const data = {};
+        formData.forEach((value, key) => { data[key] = value; });
+
+        // Envia os dados usando AJAX (fetch) para a planilha do Google
+        // SUA URL DO APPS SCRIPT CONTINUA A MESMA AQUI
+        fetch('https://script.google.com/macros/s/AKfycbwvYLcBCvuJiqQHiiD9vCY4RP-QOHpK_D7pyKa6faNUzfG6Kgfa4Mvb6LNtG0n_xQJXAg/exec', {
+            method: 'POST',
+            mode: 'no-cors', // Importante para o Google Script
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        })
+        .then(() => {
+            // Sucesso! Esconde o formulário e mostra a tela de agradecimento
+            formWrapper.style.opacity = '0';
+            setTimeout(() => {
+                formWrapper.style.display = 'none';
+                successScreen.style.display = 'block';
+                // Efeito suave de aparecimento
+                setTimeout(() => { successScreen.style.opacity = '1'; }, 50);
+            }, 300);
+        })
+        .catch(error => {
+            // Tratar erro se necessário (ex: mostrar mensagem de erro)
+            console.error('Erro ao enviar:', error);
+            submitBtn.classList.remove('loading');
+            submitBtn.disabled = false;
+            alert('Ops! Ocorreu um erro ao enviar sua avaliação. Por favor, tente novamente em instantes.');
+        });
+    });
+
 </script>
 
 </body>
