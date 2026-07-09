@@ -6,7 +6,7 @@
     <title>Avaliação de Atendimento - Gostinho Mineiro</title>
     <style>
         body {
-            background-color: #9E1B1B; /* Vermelho Colonial/Terracota Clássico do Gostinho Mineiro */
+            background-color: #9E1B1B;
             font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
@@ -22,18 +22,19 @@
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
             width: 100%;
-            max-width: 400px;
-            text-align: center;
+            max-width: 440px;
             box-sizing: border-box;
         }
         h2 {
-            color: #9E1B1B; /* Vermelho combinando com o fundo */
+            color: #9E1B1B;
+            text-align: center;
             margin-bottom: 5px;
             margin-top: 0;
         }
-        p {
+        p.subtitle {
             color: #555;
-            margin-bottom: 20px;
+            text-align: center;
+            margin-bottom: 25px;
             font-size: 14px;
         }
         .vendedora-info {
@@ -45,132 +46,127 @@
             font-weight: bold;
             display: none;
             font-size: 14px;
+            text-align: center;
         }
         label {
             display: block;
             text-align: left;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             color: #333;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 20px;
             font-size: 14px;
         }
-        input[type="text"], select, textarea {
+        input[type="text"], textarea {
             width: 100%;
-            padding: 10px;
-            margin-bottom: 10px;
+            padding: 12px;
             border: 1px solid #ccc;
             border-radius: 4px;
             box-sizing: border-box;
             font-size: 14px;
         }
+        
+        /* Sistema de Estrelas Rápido */
+        .stars-rating {
+            display: flex;
+            flex-direction: row-reverse;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+        .stars-rating input { display: none; }
+        .stars-rating label {
+            font-size: 32px;
+            color: #ccc;
+            cursor: pointer;
+            margin-top: 0;
+            transition: color 0.1s;
+        }
+        .stars-rating label:hover,
+        .stars-rating label:hover ~ label,
+        .stars-rating input:checked ~ label {
+            color: #f1c40f;
+        }
+
         button {
-            background-color: #9E1B1B; /* Botão Vermelho combinando */
+            background-color: #9E1B1B;
             color: white;
             border: none;
-            padding: 12px;
+            padding: 14px;
             border-radius: 4px;
             cursor: pointer;
             width: 100%;
             font-size: 16px;
             font-weight: bold;
-            margin-top: 15px;
+            margin-top: 25px;
             transition: background 0.2s;
         }
-        button:hover {
-            background-color: #7D1515;
-        }
-        button:disabled {
-            background-color: #ccc;
-            cursor: not-allowed;
-        }
-        #success-screen {
-            display: none;
-            padding: 20px 0;
-        }
-        #success-screen .icon {
-            font-size: 60px;
-            color: #2ecc71;
-            margin-bottom: 15px;
-        }
-        #success-screen h2 {
-            color: #333;
-        }
+        button:hover { background-color: #7D1515; }
     </style>
 </head>
 <body>
 
 <div class="container">
+    <h2>Gostinho Mineiro</h2>
+    <p class="subtitle">Sua opinião é muito importante para nós!</p>
 
-    <!-- Formulário Principal -->
-    <div id="form-wrapper">
-        <h2>Gostinho Mineiro</h2>
-        <p>Sua opinião é muito importante para nós!</p>
+    <div id="balao-vendedora" class="vendedora-info"></div>
 
-        <!-- Identificação da vendedora -->
-        <div id="balao-vendedora" class="vendedora-info"></div>
+    <form action="https://script.google.com/macros/s/AKfycbzyS8wYno8rZvbdvcNwgWXtbFB6UkI-D490Dg30cEp72wFadWE9LgPPsT5mpjvhe_uuCg/exec" method="POST">
+        
+        <input type="hidden" name="loja" id="loja">
+        <input type="hidden" name="vendedora" id="vendedora">
 
-        <form id="evaluation-form">
-            <!-- Campos ocultos para os parâmetros do link -->
-            <input type="hidden" name="loja" id="loja">
-            <input type="hidden" name="vendedora" id="vendedora">
+        <label for="documento">Seu CPF ou CNPJ:</label>
+        <input type="text" id="documento" name="documento" placeholder="000.000.000-00" required>
 
-            <!-- Campo Único de Identificação solicitado (CPF/CNPJ) -->
-            <label for="documento">Seu CPF ou CNPJ:</label>
-            <input type="text" id="documento" name="documento" placeholder="000.000.000-00" required>
+        <!-- 1. NOTA GERAL -->
+        <label>Nota Geral do Atendimento:</label>
+        <div class="stars-rating">
+            <input type="radio" id="g5" name="notaGeral" value="5" required><label for="g5">★</label>
+            <input type="radio" id="g4" name="notaGeral" value="4"><label for="g4">★</label>
+            <input type="radio" id="g3" name="notaGeral" value="3"><label for="g3">★</label>
+            <input type="radio" id="g2" name="notaGeral" value="2"><label for="g2">★</label>
+            <input type="radio" id="g1" name="notaGeral" value="1"><label for="g1">★</label>
+        </div>
 
-            <label for="notaGeral">Nota Geral do Atendimento:</label>
-            <select id="notaGeral" name="notaGeral" required>
-                <option value="">Selecione uma nota...</option>
-                <option value="5">5 - Excelente</option>
-                <option value="4">4 - Muito Bom</option>
-                <option value="3">3 - Regular</option>
-                <option value="2">2 - Ruim</option>
-                <option value="1">1 - Muito Ruim</option>
-            </select>
+        <!-- 2. CONHECIMENTO -->
+        <label>O vendedor demonstrou conhecimento dos produtos?</label>
+        <div class="stars-rating">
+            <input type="radio" id="c5" name="conhecimento" value="5" required><label for="c5">★</label>
+            <input type="radio" id="c4" name="conhecimento" value="4"><label for="c4">★</label>
+            <input type="radio" id="c3" name="conhecimento" value="3"><label for="c3">★</label>
+            <input type="radio" id="c2" name="conhecimento" value="2"><label for="c2">★</label>
+            <input type="radio" id="c1" name="conhecimento" value="1"><label for="c1">★</label>
+        </div>
 
-            <label for="conhecimento">O vendedor demonstrou conhecimento dos produtos?</label>
-            <select id="conhecimento" name="conhecimento" required>
-                <option value="">Selecione...</option>
-                <option value="Excelente">Excelente</option>
-                <option value="Bom">Bom</option>
-                <option value="Regular">Regular</option>
-            </select>
+        <!-- 3. ATENÇÃO -->
+        <label>Como foi a atenção dada a você?</label>
+        <div class="stars-rating">
+            <input type="radio" id="a5" name="atencao" value="5" required><label for="a5">★</label>
+            <input type="radio" id="a4" name="atencao" value="4"><label for="a4">★</label>
+            <input type="radio" id="a3" name="atencao" value="3"><label for="a3">★</label>
+            <input type="radio" id="a2" name="atencao" value="2"><label for="a2">★</label>
+            <input type="radio" id="a1" name="atencao" value="1"><label for="a1">★</label>
+        </div>
 
-            <label for="atencao">Como foi a atenção dada a você?</label>
-            <select id="atencao" name="atencao" required>
-                <option value="">Selecione...</option>
-                <option value="Excelente">Excelente</option>
-                <option value="Bom">Bom</option>
-                <option value="Regular">Regular</option>
-            </select>
+        <!-- 4. AGILIDADE -->
+        <label>A agilidade no atendimento foi satisfatória?</label>
+        <div class="stars-rating">
+            <input type="radio" id="ag5" name="agilidade" value="5" required><label for="ag5">★</label>
+            <input type="radio" id="ag4" name="agilidade" value="4"><label for="ag4">★</label>
+            <input type="radio" id="ag3" name="agilidade" value="3"><label for="ag3">★</label>
+            <input type="radio" id="ag2" name="agilidade" value="2"><label for="ag2">★</label>
+            <input type="radio" id="ag1" name="agilidade" value="1"><label for="ag1">★</label>
+        </div>
 
-            <label for="agilidade">A agilidade no atendimento foi satisfatória?</label>
-            <select id="agilidade" name="agilidade" required>
-                <option value="">Selecione...</option>
-                <option value="Excelente">Excelente</option>
-                <option value="Bom">Bom</option>
-                <option value="Regular">Regular</option>
-            </select>
+        <label for="comentario">Deixe um comentário ou sugestão (Opcional):</label>
+        <textarea id="comentario" name="comentario" rows="3" placeholder="Escreva aqui..."></textarea>
 
-            <label for="comentario">Deixe um comentário ou sugestão (Opcional):</label>
-            <textarea id="comentario" name="comentario" rows="3" placeholder="Escreva aqui..."></textarea>
-
-            <button type="submit" id="submit-btn">Enviar Avaliação</button>
-        </form>
-    </div>
-
-    <!-- Tela de Sucesso Limpa -->
-    <div id="success-screen">
-        <div class="icon">✓</div>
-        <h2>Avaliação Enviada!</h2>
-        <p>Agradecemos muito a sua participação.</p>
-    </div>
-
+        <button type="submit">Enviar Avaliação</button>
+    </form>
 </div>
 
 <script>
-    // 1. Ler parâmetros da URL (?loja=Atacado&vendedora=Daiana)
     const urlParams = new URLSearchParams(window.location.search);
     const lojaParam = urlParams.get('loja');
     const vendedoraParam = urlParams.get('vendedora');
@@ -182,40 +178,6 @@
         balao.innerText = `Você está avaliando o atendimento de: ${vendedoraParam}`;
         balao.style.display = 'block';
     }
-
-    // 2. Enviar para o Google Sheets em segundo plano (AJAX)
-    const form = document.getElementById('evaluation-form');
-    const submitBtn = document.getElementById('submit-btn');
-    const formWrapper = document.getElementById('form-wrapper');
-    const successScreen = document.getElementById('success-screen');
-
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Enviando...';
-
-        const formData = new FormData(form);
-        const data = {};
-        formData.forEach((value, key) => { data[key] = value; });
-
-        fetch(https://script.google.com/macros/s/AKfycbwgPerZQ4QZ_FOxRnvsVvc7pDRFYOrH78UZeUX02SdCWlSozW1zm2n-YStm9WxGtC_atA/exec', {
-            method: 'POST',
-            mode: 'no-cors',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
-        })
-        .then(() => {
-            formWrapper.style.display = 'none';
-            successScreen.style.display = 'block';
-        })
-        .catch(error => {
-            console.error('Erro:', error);
-            submitBtn.disabled = false;
-            submitBtn.innerText = 'Enviar Avaliação';
-            alert('Erro ao enviar. Tente novamente.');
-        });
-    });
 </script>
 
 </body>
