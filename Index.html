@@ -84,7 +84,6 @@
     margin: 0 0 22px;
   }
   
-  /* Estilos do Campo CPF/CNPJ */
   .input-group {
     margin-bottom: 24px;
     text-align: left;
@@ -268,7 +267,6 @@
 
       <h1>Como foi sua experiência com o atendimento hoje?</h1>
 
-      <!-- Novo Espaço do CPF/CNPJ integrado ao Design -->
       <div class="input-group">
         <label for="documento">Seu CPF ou CNPJ</label>
         <input type="text" id="documento" placeholder="000.000.000-00" required>
@@ -380,14 +378,19 @@
     criteriaList.appendChild(row);
   });
 
-  // Escuta se o CPF foi digitado para ativar o botão
   document.getElementById('documento').addEventListener('input', checkReady);
 
   function checkReady(){
     var docInput = document.getElementById('documento').value.trim();
     var allCriteriaSet = criteria.every(function(c){ return criteriaValues[c.id] > 0; });
-    // Botão só ativa se tiver CPF/CNPJ, nota geral (faces) e todas as estrelas preenchidas
     document.getElementById('submitBtn').disabled = !(overallValue && allCriteriaSet && docInput.length > 0);
+  }
+
+  // Função para codificar os dados como se estivessem vindo de um formulário tradicional
+  function encodeForm(data){
+    return Object.keys(data).map(function(k){
+      return encodeURIComponent(k) + '=' + encodeURIComponent(data[k]);
+    }).join('&');
   }
 
   document.getElementById('submitBtn').addEventListener('click', function(){
@@ -395,6 +398,7 @@
     btn.disabled = true;
     btn.textContent = 'Enviando...';
 
+    // Vinculado perfeitamente com os nomes de colunas que a planilha lê
     var formData = {
       loja: loja,
       vendedora: vendedora,
@@ -406,12 +410,12 @@
       comentario: document.getElementById('comentario').value
     };
 
-    // Link do seu Google Script funcional em segundo plano
+    // Link do seu Google Script executando o envio de formulário padrão
     fetch('https://script.google.com/macros/s/AKfycbzyS8wYno8rZvbdvcNwgWXtbFB6UkI-D490Dg30cEp72wFadWE9LgPPsT5mpjvhe_uuCg/exec', {
       method: 'POST',
       mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData)
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encodeForm(formData)
     })
     .then(function(){
       document.getElementById('formView').style.display = 'none';
